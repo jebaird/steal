@@ -1,4 +1,3 @@
-
 steal('steal/build').then(function( steal ) {
 
 	/**
@@ -56,10 +55,15 @@ steal('steal/build').then(function( steal ) {
 
 				//it's a relative path from cssLocation, need to convert to
 				// prodLocation
-				var rootImagePath = steal.File(part).joinFrom(cssLoc),
-					fin = steal.File(rootImagePath).toReferenceFromSameDomain(prodLocation);
+				var rootImagePath = steal.File(part).joinFrom(cssLoc);
+				//catch http:// prevent it from getting ../http://
+				if( /^(https*):\/\//.test( rootImagePath ) ){
+					return "url(" + rootImagePath + ")";
+				}
+				
+				var fin = steal.File(rootImagePath).toReferenceFromSameDomain(prodLocation);
 				//print("  -> "+rootImagePath);
-				// steal.print("  " + part + " > " + fin);
+				//steal.print("\n  " + part + " > " + fin);
 				return "url(" + fin + ")";
 			});
 		return newCSS;
